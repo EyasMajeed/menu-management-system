@@ -50,7 +50,7 @@
                                         <span class="badge px-3 py-2 rounded-pill text-black" style="
                                             background-color: {{
                                             $category['status']  === 'Active' ? '#E0F7F0' :
-                                            ($category['status']  === 'Inactive' ? '#FFA500' :  '#808080')
+                                            ($category['status']  === 'Inactive' ? '#808080' :  '#000000')
                                             }};  
 
                                             font-weight: 450;
