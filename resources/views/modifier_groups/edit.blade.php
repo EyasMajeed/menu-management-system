@@ -4,7 +4,7 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Edit Modifier Group: {{ $modifierGroup->name['en'] ?? $modifierGroup->name ?? 'N/A' }}</h4>
-        <form action="{{ route('menus.modifier-groups.destroy', ['menu' => $menu->id, 'modifierGroup' => $modifierGroup->id]) }}" method="POST"
+        <form action="{{ route('menus.modifier-groups.destroy', ['menu' => $menu->id, 'modifier_group' => $modifierGroup->id]) }}" method="POST"
             onsubmit="return confirm('Are you sure you want to delete this modifier group? This action cannot be undone.')">
             @csrf
             @method('DELETE')
@@ -31,7 +31,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('menus.modifier-groups.update', ['menu' => $menu->id, 'modifierGroup' => $modifierGroup->id]) }}">
+    <form method="POST" action="{{ route('menus.modifier-groups.update', ['menu' => $menu->id, 'modifier_group' => $modifierGroup->id]) }}">
         @csrf
         @method('PUT')
 
@@ -105,7 +105,7 @@
             @error('branch_ids.*') <div class="text-danger">{{ $message }}</div> @enderror
         </div>
 
-        <button type="submit" class="btn btn-dark mt-3">Update Modifier Group</button>
+        <button type="submit" class="btn btn-dark mt-3 mb-5">Update Modifier Group</button>
     </form>
 </div>
 @endsection

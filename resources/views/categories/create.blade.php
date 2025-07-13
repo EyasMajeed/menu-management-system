@@ -21,7 +21,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('categories.store', $menu->id) }}">
+            <form method="POST" action="{{ route('menus.categories.store', $menu->id) }}">
                 @csrf
 
                 <div class="mb-3">

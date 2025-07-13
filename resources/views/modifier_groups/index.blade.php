@@ -39,7 +39,7 @@
                         </thead>
                         <tbody>
                             @forelse($modifierGroups as $group) {{-- Changed $modifierGroup to $group for consistency with previous updates --}}
-                            <tr onclick="handleRowClick(event, '{{ route('menus.modifier-groups.edit', ['menu' => $menu->id, 'modifierGroup' => $group->id]) }}')"
+                            <tr onclick="handleRowClick(event, '{{ route('menus.modifier-groups.edit', ['menu' => $menu->id, 'modifier_group' => $group->id]) }}')"
                                 style="cursor: pointer;"> 
                                 <td>{{ $group->name['en'] ?? 'N/A' }}</td>
                                 <td><span class="badge bg-secondary">{{ ucfirst($group->type) }}</span></td>
@@ -64,7 +64,7 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <a href="{{ route('menus.modifier-groups.edit', ['menu' => $menu->id, 'modifierGroup' => $group->id]) }}"
+                                        <a href="{{ route('menus.modifier-groups.edit', ['menu' => $menu->id, 'modifier_group' => $group->id]) }}"
                                             class="btn btn-dark rounded-circle p-0"
                                             style="width: 30px; height: 30px; display: flex; justify-content: center; align-items: center;"
                                             title="Edit Modifier Group">

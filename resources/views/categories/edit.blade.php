@@ -4,7 +4,7 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Edit Category</h4>
-        <form action="{{ route('categories.destroy', $category->id) }}" method="POST"
+        <form action="{{ route('menus.categories.destroy', ['menu' => $menu->id, 'category' => $category->id]) }}" method="POST"
             onsubmit="return confirm('Are you sure you want to delete this category? This action cannot be undone.')">
             @csrf
             @method('DELETE')
@@ -30,7 +30,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('categories.update', $category->id) }}">
+    <form method="POST" action="{{ route('menus.categories.update', ['menu' => $menu->id, 'category' => $category->id]) }}">
         @csrf
         @method('PUT')
 

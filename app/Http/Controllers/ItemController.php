@@ -101,7 +101,7 @@ class ItemController extends Controller
      * @param  \App\Models\Item  $item
      * @return \Illuminate\View\View
      */
-    public function edit(Item $item) // Reverted: Removed Menu $menu parameter
+    public function edit(Menu $menu,Item $item) // Reverted: Removed Menu $menu parameter
     {
         // No security check here as per user request.
         // It's generally recommended to have this check for security.
@@ -144,7 +144,7 @@ class ItemController extends Controller
      * @param  \App\Models\Item  $item
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Item $item) // Reverted: Removed Menu $menu parameter
+    public function update(Request $request, Menu $menu, Item $item) // Reverted: Removed Menu $menu parameter
     {
         // No security check here as per user request.
         // It's generally recommended to have this check for security.

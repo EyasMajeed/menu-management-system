@@ -24,7 +24,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Edit Item: {{ $item->name['en'] ?? $item->name ?? 'N/A' }}</h4>
-        <form action="{{ route('items.destroy', ['menu' => $item->menu_id, 'item' => $item->id]) }}" method="POST"
+        <form action="{{ route('menus.items.destroy', ['menu' => $menu->id, 'item' => $item->id]) }}" method="POST"
             onsubmit="return confirm('Are you sure you want to delete this item? This action cannot be undone.')">
             @csrf
             @method('DELETE')
@@ -32,7 +32,7 @@
         </form>
     </div>
 
-    <form method="POST" action="{{ route('items.update', ['menu' => $item->menu_id, 'item' => $item->id]) }}">
+    <form method="POST" action="{{ route('menus.items.update', ['menu' => $menu->id, 'item' => $item->id]) }}">
         @csrf
         @method('PUT')
 

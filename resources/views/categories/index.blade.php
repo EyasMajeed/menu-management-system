@@ -8,7 +8,7 @@
     @include('partials.menu-tabs', ['menu' => $menu])
 
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ route('categories.create', $menu->id) }}" class="btn btn-black rounded-circle p-0 "
+        <a href="{{ route('menus.categories.create', $menu->id) }}" class="btn btn-black rounded-circle p-0 "
            style="width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;"
            title="Create Category">
             <i class="bi bi-plus-circle-fill fs-3"></i> 
@@ -35,7 +35,7 @@
                         
                         <tbody class="table-group-divider color:grey">
                             @foreach($categories as $category)
-                            <tr onclick="handleRowClick(event, '{{ route('categories.edit', $category->id) }}')"
+                            <tr onclick="handleRowClick(event, '{{ route('menus.categories.edit', ['menu' => $menu->id, 'category' => $category->id]) }}')"
                                 style="cursor: pointer;">
                                 <td>
                                     {{ $category->name['en'] ?? '' }}
@@ -64,7 +64,7 @@
 
                                 <td class=" text-center">
                                     <div class="d-flex justify-content-center align-items-center">
-                                    <a href="{{ route('categories.edit', $category->id) }}"
+                                    <a href="{{ route('menus.categories.edit', ['menu' => $menu->id, 'category' => $category->id]) }}"
                                         class="btn btn-dark rounded-circle p-0"
                                         style="width: 30px; height: 30px; display: flex; justify-content: center; align-items: center;">
                                         <i class="bi bi-pencil"></i>

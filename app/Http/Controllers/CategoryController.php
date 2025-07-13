@@ -146,7 +146,7 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category The Category model instance resolved by route model binding.
      * @return \Illuminate\View\View
      */
-    public function edit(Category $category)
+    public function edit(Menu $menu, Category $category)
     {
         $menu = $category->menu; // Get the menu associated with this category.
         // Retrieve items associated with the category's menu, ordered by creation date.
@@ -171,7 +171,7 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category The Category model instance resolved by route model binding.
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, Menu $menu, Category $category)
     {
         // Validate the incoming request data.
         $validatedData = $request->validate([
