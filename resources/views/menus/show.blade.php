@@ -2,9 +2,6 @@
 
 @section('content')
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>{{ $menu->name }}</h3>
-    </div>
 
     @include('partials.menu-tabs', ['menu' => $menu])
 

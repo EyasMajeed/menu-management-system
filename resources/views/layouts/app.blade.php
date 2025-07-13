@@ -5,9 +5,61 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title')</title>
-    <link href="https://unpkg.com/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    
+    {{-- Bootstrap CSS from cdn.jsdelivr.net (most reliable CDN for Bootstrap 5.3.x) --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    {{-- Bootstrap Icons CSS (if you use any Bootstrap Icons) --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    {{-- Custom styles for your application --}}
+    <style>
+        /* General table styling */
+        .table-group-divider {
+            border-top-color: #cccccc !important;
+            border-top-width: 2px !important;
+        }
+        .custom-row-spacing-table th,
+        .custom-row-spacing-table td {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        /* Custom styling for the nav-pills to make them fully rounded and button-like */
+        /* This targets the .nav-pills class you're using in your partial */
+        .nav-pills .nav-link {
+            border: none; /* Remove any default borders */
+            border-radius: 9999px; /* Makes the corners fully rounded (pill shape) */
+            padding: 0.5rem 0.8rem; /* ADJUSTED: Reduced padding for smaller size */
+            margin-right: 1rem; /* Space between the pills */
+            background-color: transparent; /* Default transparent background for inactive pills */
+            color: #212529; /* Default text color (dark) */
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transitions */
+            font-weight: normal; /* Ensure text is not bold by default */
+            text-decoration: none; /* Remove underline from links */
+            font-size: 0.9rem; /* Optionally make text slightly smaller */
+        }
+
+        .nav-pills .nav-link:hover {
+            background-color: #e9ecef; /* Light background on hover */
+            color: #212529;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: #212529; /* Dark background for active pill */
+            color: #ffffff; /* White text for active pill */
+            font-weight: bold; /* Make active text bold */
+            /* No border-bottom needed for nav-pills, unlike nav-tabs */
+        }
+
+        /* Ensure the nav-pills container itself doesn't have unwanted borders */
+        .nav.nav-pills {
+            border-bottom: none; /* Just in case a parent style adds it */
+        }
+    </style>
+
+    @stack('styles') {{-- For any page-specific styles pushed from other views --}}
 </head>
 
 <body>
@@ -34,28 +86,12 @@
 
     @yield('content')
 
-    <!-- Bootstrap JS -->
-    <script src="https://unpkg.com/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous">
+    <!-- Bootstrap JS Bundle (includes Popper.js for dropdowns, tooltips etc.) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
-    <style>
-        .table-group-divider {
-            border-top-color: #cccccc !important;
-            /* Use a light grey color. !important ensures it overrides Bootstrap's default. */
-            border-top-width: 2px !important;
-            /* You can adjust the thickness if needed */
-        }
 
-        .custom-row-spacing-table th,
-        .custom-row-spacing-table td {
-            padding-top: 1.5rem;
-            /* Equivalent to mt-3 or similar */
-            padding-bottom: 1.5rem;
-            /* Equivalent to mb-3 or similar */
-        }
-    </style>
-
-    @stack('scripts')
+    @stack('scripts') {{-- For any page-specific JavaScript pushed from other views --}}
 </body>
 
 </html>

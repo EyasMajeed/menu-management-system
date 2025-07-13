@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="container mt-5">
-    <h3>{{ $menu->name }}</h3>
 
     
     @include('partials.menu-tabs', ['menu' => $menu])
