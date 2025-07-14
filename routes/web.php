@@ -68,6 +68,9 @@ Route::get('/menus/{menu}/working-hours', [BranchWorkingHourController::class, '
 Route::get('/menus/{menu}/branches/{branch}/working-hours/edit', [BranchWorkingHourController::class, 'edit'])->name('menus.branches.working-hours.edit');
 Route::put('/menus/{menu}/branches/{branch}/working-hours', [BranchWorkingHourController::class, 'update'])->name('menus.branches.working-hours.update');
 
+// This route will handle the POST request from the "Sync Menu" button
+Route::post('menus/{menu}/sync', [MenuController::class, 'syncMenuToDeliveryApp'])->name('menus.sync');
+
 
 // ------------------------------------------- ORDERS MANAGEMENT ---------------------------------------------
 

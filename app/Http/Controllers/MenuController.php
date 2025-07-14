@@ -10,6 +10,9 @@ use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\ModifierGroup;
+use App\Services\MenuSyncService;
+use App\Jobs\SyncMenuToPlatform;
+
 
 /**
  * Class MenuController
@@ -204,5 +207,62 @@ class MenuController extends Controller
 
         // Redirect to the menus index page with a success message.
         return redirect()->route('menus.index')->with('success', 'Menu deleted successfully!');
+    }
+
+    /**
+     * Synchronizes the menu structure to selected delivery platforms for specific branches.
+     *
+     * @param  \Illuminate\Http\Request  $request The incoming HTTP request containing selected branch IDs.
+     * @param  \App\Models\Menu  $menu The Menu model instance resolved by route model binding.
+     * @param  \App\Services\MenuSyncService $menuSyncService The MenuSyncService instance injected by Laravel.
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function syncMenuToDeliveryApp(Request $request, Menu $menu, MenuSyncService $menuSyncService)
+    {
+        // Validate the incoming request to ensure branch_ids are provided and exist.
+        $validatedData = $request->validate([
+            'branch_ids' => 'required|array',
+            'branch_ids.*' => 'exists:branches,id', // Ensure each provided ID is a valid branch ID
+        ]);
+
+        $selectedBranchIds = $validatedData['branch_ids'];
+        $syncResults = []; // To store results for each branch sync
+
+        // Retrieve the actual Branch models for the selected IDs
+        // Ensure these branches are also associated with the current menu for security/logic
+        // CORRECTED: Explicitly specify 'branches.id' to avoid ambiguity
+        $branchesToSync = $menu->branches()->whereIn('branches.id', $selectedBranchIds)->get();
+
+        if ($branchesToSync->isEmpty()) {
+            return redirect()->back()->with('error', 'No valid branches selected for sync or branches not associated with this menu.');
+        }
+
+        // Loop through each selected branch and call the MenuSyncService
+        foreach ($branchesToSync as $branch) {
+            $result = $menuSyncService->sync($menu, $branch);
+            $syncResults[] = $result; // Store the result for each sync operation
+        }
+
+        // Aggregate messages from sync results
+        $successMessages = [];
+        $errorMessages = [];
+
+        foreach ($syncResults as $result) {
+            if ($result['status'] === 'success') {
+                $successMessages[] = $result['message'];
+            } else {
+                $errorMessages[] = $result['message'];
+            }
+        }
+
+        // Provide feedback based on the sync outcomes
+        if (!empty($successMessages) && empty($errorMessages)) {
+            return redirect()->back()->with('success', implode('<br>', $successMessages));
+        } elseif (empty($successMessages) && !empty($errorMessages)) {
+            return redirect()->back()->with('error', implode('<br>', $errorMessages));
+        } else {
+            // Mixed results
+            return redirect()->back()->with('warning', implode('<br>', $successMessages) . '<br>' . implode('<br>', $errorMessages));
+        }
     }
 }
