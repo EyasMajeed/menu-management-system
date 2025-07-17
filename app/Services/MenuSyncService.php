@@ -16,7 +16,19 @@ use Illuminate\Http\Client\RequestException;
 
 class MenuSyncService
 {
-    protected string $deliveryPlatformApiUrl = 'http://127.0.0.1:8001/api/mock-menu-sync';
+
+    // The specific endpoint path for menu synchronization
+    protected string $menuSyncEndpoint = '/api/mock-menu-sync';
+
+    protected string $deliveryPlatformApiUrl;
+
+
+    public function __construct()
+    {
+        // Combine the base URL from .env with the specific endpoint path
+        $baseUrl = config('services.delivery_app.base_url');
+        $this->deliveryPlatformApiUrl = $baseUrl . $this->menuSyncEndpoint;
+    }
 
     public function sync(Menu $menu, Branch $branch): array
     {
@@ -28,7 +40,7 @@ class MenuSyncService
             ]);
 
             // Get the branch's working hours
-            $branchWorkingHours = $branch->workingHours->keyBy('day_of_week');
+            $branchWorkingHours = optional($branch->workingHours)->keyBy('day_of_week') ?? collect();
             $scheduleTime = $this->formatScheduleTime($branchWorkingHours);
 
             $categoriesPayload = $this->formatCategories($menu->categories, $scheduleTime);
@@ -55,13 +67,13 @@ class MenuSyncService
                 ],
             ];
 
-
-            // Send the POST request with an explicit timeout and throw exceptions on errors
+            // This is the ONLY Http call that should be here.
+            // When running tests, Http::fake() in the test file will intercept THIS call.
             $response = Http::timeout(120) // Set timeout to 120 seconds
                             ->throw() // Throws RequestException for 4xx or 5xx responses
                             ->post($this->deliveryPlatformApiUrl, $payload);
-
             
+
             $branchNameForMessage = $branch->name['en'] ?? $branch->name;
 
             if ($response->successful()) {
@@ -74,8 +86,6 @@ class MenuSyncService
                     'response' => $response->json(),
                 ];
             } else {
-                // This block should ideally not be reached if ->throw() is used for 4xx/5xx
-                // but kept as a fallback for other non-successful scenarios if any.
                 Log::error("Menu sync failed for Menu ID: {$menu->id}, Branch ID: {$branch->id}", [
                     'status_code' => $response->status(),
                     'response_body' => $response->body(),
@@ -89,7 +99,7 @@ class MenuSyncService
                 ];
             }
 
-        } catch (RequestException $e) { // Catch specific Guzzle/HTTP client exceptions (4xx/5xx responses)
+        } catch (RequestException $e) {
             Log::error("HTTP Client Error during menu sync for Menu ID: {$menu->id}, Branch ID: {$branch->id}. Error: " . $e->getMessage(), [
                 'status_code' => $e->response ? $e->response->status() : 'N/A',
                 'response_body' => $e->response ? $e->response->body() : 'N/A',
@@ -104,7 +114,7 @@ class MenuSyncService
                 'response' => $e->response ? $e->response->json() : null,
                 'error_details' => $e->response ? $e->response->body() : $e->getMessage(),
             ];
-        } catch (\Exception $e) { // Catch any other unexpected exceptions
+        } catch (\Exception $e) {
             Log::error("An unexpected error occurred during menu sync for Menu ID: {$menu->id}, Branch ID: {$branch->id}. Error: " . $e->getMessage(), [
                 'exception' => $e,
                 'trace' => $e->getTraceAsString(),
@@ -120,12 +130,6 @@ class MenuSyncService
         }
     }
 
-    /**
-     * Formats branch working hours into the required schedule_time JSON structure.
-     *
-     * @param \Illuminate\Support\Collection $workingHours A collection of BranchWorkingHour models keyed by day_of_week.
-     * @return array The formatted schedule_time array.
-     */
     protected function formatScheduleTime($workingHours): array
     {
         $daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -151,13 +155,6 @@ class MenuSyncService
         return $schedule;
     }
 
-    /**
-     * Formats categories into the required JSON structure.
-     *
-     * @param \Illuminate\Support\Collection $categories A collection of Category models.
-     * @param array $scheduleTime The branch's schedule time to apply to categories.
-     * @return array The formatted categories array.
-     */
     protected function formatCategories($categories, $scheduleTime): array
     {
         $formattedCategories = [];
@@ -172,13 +169,6 @@ class MenuSyncService
         return $formattedCategories;
     }
 
-    /**
-     * Formats items into the required JSON structure.
-     *
-     * @param \Illuminate\Support\Collection $items A collection of Item models.
-     * @param array $scheduleTime The branch's schedule time to apply to items.
-     * @return array The formatted items array.
-     */
     protected function formatItems($items, $scheduleTime): array
     {
         $formattedItems = [];
@@ -197,12 +187,6 @@ class MenuSyncService
         return $formattedItems;
     }
 
-    /**
-     * Formats modifier groups (toppings) and their modifiers (options) into the required JSON structure.
-     *
-     * @param \Illuminate\Support\Collection $modifierGroups A collection of ModifierGroup models.
-     * @return array The formatted toppings array.
-     */
     protected function formatToppings($modifierGroups): array
     {
         $formattedToppings = [];
@@ -216,8 +200,6 @@ class MenuSyncService
                 ];
             }
 
-            // Ensure items relationship is loaded or handled carefully here
-            // This line could cause N+1 if not eager loaded properly
             $itemIds = $modifierGroup->items->pluck('id')->map(fn($id) => (string) $id)->toArray();
 
             $formattedToppings[] = [
