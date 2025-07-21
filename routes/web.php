@@ -14,17 +14,30 @@ use App\Http\Controllers\BranchWorkingHourController;
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
 // Default welcome page
 Route::get('/', function () {
     return view('welcome');
 });
+// --- TEMPORARY TEST ROUTE FOR HTTP::FAKE() DEMONSTRATION ---
+Route::get('/test-fake-http', function () {
+    // This line tells Laravel: "If any Http client call tries to access
+    // 'https://example.com/api/*' (or anything starting with it),
+    // immediately return a 200 OK response with a JSON body of ['message' => 'Success!']"
+    Http::fake([
+        'https://example.com/api/*' => Http::response(['message' => 'Success!'], 200),
+    ]);
 
+    // This line makes an HTTP GET request to 'https://example.com/api/test'.
+    // BUT, because Http::fake() is active, this request will NOT go out to the real internet.
+    // It will be intercepted, and the fake response you defined above will be returned instantly.
+    $response = Http::get('https://example.com/api/test');
+
+    // This will dump the JSON content of the $response.
+    // You will see: ['message' => 'Success!']
+    dd($response->json());
+});
 // ------------------------------------------- MENU MANAGEMENT ---------------------------------------------
 
 // Resource routes for Menus.
@@ -85,7 +98,7 @@ Route::get('/restore-orders', [OrderController::class, 'restoreOrders'])->name('
 
 // ------------------------------------------- DEVELOPMENT NOTES (Remove in Production) ---------------------------------------------
 // The following comments are development notes and are not part of the actual routing logic.
-// They can be removed or kept for your reference.
+// They can be removed or kept for reference.
 
 //add a new page steps:
 //1-define a route in web.php:

@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('item_modifier_group', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('item_id')->constrained()->onDelete('cascade');
             $table->foreignId('modifier_group_id')->constrained()->onDelete('cascade');
-            $table->primary(['item_id', 'modifier_group_id']); // Composite primary key
+            
         });
     }
 
